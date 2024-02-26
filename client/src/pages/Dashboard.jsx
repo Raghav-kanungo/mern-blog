@@ -22,11 +22,11 @@ function Dashboard() {
         {/* sidebar */}
         <DashSidebar />
       </div>
-      <div className="w-full">
-        {/* profile */}
-        {tab === "profile" && <DashProfile />}
-        {tab == "posts" && <DashPosts />}
-      </div>
+      {/* <div className="w-full"> */}
+      {/* profile */}
+      {tab === "profile" && <DashProfile />}
+      {tab == "posts" && <DashPosts />}
+      {/* </div> */}
     </div>
   );
 }
