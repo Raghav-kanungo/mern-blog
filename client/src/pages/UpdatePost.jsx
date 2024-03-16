@@ -1,5 +1,4 @@
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
-import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
@@ -9,6 +8,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -21,8 +21,10 @@ export default function UpdatePost() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const { postId } = useParams();
+
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
+
   useEffect(() => {
     try {
       const fetchPost = async () => {
@@ -40,9 +42,12 @@ export default function UpdatePost() {
       };
 
       fetchPost();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.message);
+    }
   }, [postId]);
-  const handleUploadImage = async () => {
+
+  const handleUpdloadImage = async () => {
     try {
       if (!file) {
         setImageUploadError("Please select an image");
@@ -53,9 +58,8 @@ export default function UpdatePost() {
       const fileName = new Date().getTime() + "-" + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
-
       uploadTask.on(
-        "state-changed",
+        "state_changed",
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -75,7 +79,7 @@ export default function UpdatePost() {
       );
     } catch (error) {
       setImageUploadError("Image upload failed");
-      setImageUploadProgress(nul);
+      setImageUploadProgress(null);
       console.log(error);
     }
   };
@@ -83,7 +87,7 @@ export default function UpdatePost() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `/api/post/updatepost/${formData._id}/${currentUser._id}`,
+        `/api/post/updatepost/${postId}/${currentUser._id}`,
         {
           method: "PUT",
           headers: {
@@ -108,7 +112,7 @@ export default function UpdatePost() {
   };
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
-      <h1 className="text-center text-3xl my-7 font-semibold">Update a post</h1>
+      <h1 className="text-center text-3xl my-7 font-semibold">Update post</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
@@ -117,24 +121,24 @@ export default function UpdatePost() {
             required
             id="title"
             className="flex-1"
-            onChange={(e) => {
-              setFormData({ ...formData, title: e.target.value });
-            }}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
             value={formData.title}
           />
           <Select
-            onChange={(e) => {
-              setFormData({ ...formData, category: e.target.value });
-            }}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
             value={formData.category}
           >
             <option value="uncategorized">Select a category</option>
-            <option value="javascript">Javascript</option>
+            <option value="javascript">JavaScript</option>
             <option value="reactjs">React.js</option>
             <option value="nextjs">Next.js</option>
           </Select>
         </div>
-        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3 ">
+        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
             type="file"
             accept="image/*"
@@ -145,14 +149,14 @@ export default function UpdatePost() {
             gradientDuoTone="purpleToBlue"
             size="sm"
             outline
-            onClick={handleUploadImage}
+            onClick={handleUpdloadImage}
             disabled={imageUploadProgress}
           >
             {imageUploadProgress ? (
               <div className="w-16 h-16">
                 <CircularProgressbar
                   value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0} %`}
+                  text={`${imageUploadProgress || 0}%`}
                 />
               </div>
             ) : (
