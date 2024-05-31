@@ -16,18 +16,3 @@ export const verifyToken = (req, res, next) => {
     next();
   });
 };
-// export const verifyToken = (req, res, next) => {
-//   const token = req.cookies.access_token;
-//   if (!token) {
-//     return next(errorHandler(401, "Unauthorized: Token missing"));
-//   }
-//   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-//     if (err) {
-//       console.error("Token verification error:", err);
-//       return next(errorHandler(401, "Unauthorized: Token invalid"));
-//     }
-//     console.log("Decoded user:", user);
-//     req.user = user;
-//     next();
-//   });
-// };
